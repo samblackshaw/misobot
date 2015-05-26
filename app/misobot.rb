@@ -28,15 +28,34 @@ db_config = YAML::load(ERB.new(File.read("app/config/database.yml")).result)
 ActiveRecord::Base.establish_connection(db_config["production"])
 
 
-# Implementation of a reply method that circumvents the limitations of Twitch
-# IRC. Reference: https://github.com/cinchrb/cinch/issues/151
+# Altered implementation of a reply method that circumvents the limitations of
+# Twitch IRC. Reference: https://github.com/cinchrb/cinch/issues/151
 #-------------------------------------------------------------------------------
 class Cinch::Message
   def twitch(string)
     string = string.to_s.gsub("<","&lt;").gsub(">","&gt;")
     bot.irc.send ":#{bot.config.user}!#{bot.config.user}" +
                  "@#{bot.config.user}.tmi.twitch.tv PRIVMSG " +
-                 "#{channel} :#{string}"
+                 "##{ENV['TWITCH_USER']} :#{string}"
+  end
+end
+
+
+# Helper class
+#-------------------------------------------------------------------------------
+class MisoHelper
+  @@moderators = [ENV["TWITCH_USER"]]
+
+  def self.mods
+    @@moderators
+  end
+
+  def self.add_mods(mods)
+    @@moderators += mods
+  end
+
+  def self.is_mod?(name)
+    @@moderators.include? name
   end
 end
 
@@ -45,8 +64,6 @@ end
 #-------------------------------------------------------------------------------
 bot = Cinch::Bot.new do
 
-  # Config
-  #-----------------------------------------------------------------------------
   configure do |c|
 
     # Twitch
@@ -64,6 +81,14 @@ bot = Cinch::Bot.new do
 
     # Plugins
     c.plugins.plugins = [Giveaways, Tokens, Tokens::Penalty]
+  end
+
+  on :connect do |m|
+    m.twitch "/mods"
+  end
+
+  on :private do |m|
+    MisoHelper.add_mods m.params[-1].split(": ")[-1].split(", ")
   end
 end
 

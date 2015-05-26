@@ -11,7 +11,6 @@ class Tokens
   include Cinch::Plugin
   match "mytokens"
 
-  MODS = %w(tohfoo_ ace00021 eastoftheedge kat123899 misobot tuffbluepuff)
   NAME = "Tohfoo Tokens"
 
   def execute(m)
@@ -30,7 +29,7 @@ class Tokens::Penalty
   def execute(m)
 
     # Is a mod
-    if Tokens::MODS.include? m.user.nick
+    if MisoHelper.is_mod? m.user.nick
       params = m.params[-1].split(" ")
 
       # Check for command format correctness
@@ -63,7 +62,7 @@ class Tokens::Penalty
 
     # User does not exist in database
     else
-      m.twitch "@#{user.name} does not have a #{Tokens::NAME} account."
+      m.twitch "@#{username} does not have a #{Tokens::NAME} account."
     end
   end
 end
