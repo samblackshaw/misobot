@@ -31,17 +31,11 @@ class Tokens::Penalty
     # Is a mod
     if MisoHelper.is_mod? m.user.nick
       params = m.params[-1].split(" ")
-
-      # Check for command format correctness
-      if params.count == 2
-        penalize(params[1], 10, m)
-      else
-        m.twitch "Usage: !penalize {username}"
-      end
+      penalize(params[1], 10, m) if params.count == 2
 
     # Is not a mod
     else
-      m.twitch "@#{m.user.nick}, you ain't no mod!"
+      m.twitch "SwiftRage @#{m.user.nick}, you ain't no mod!"
       penalize(m.user.nick, 5, m)
     end
   end
@@ -51,18 +45,12 @@ class Tokens::Penalty
   # @param {integer} - amount
   # @param {message} - m
   def penalize(username, amount, m)
-    user = User.find_by(name: username)
+    user = User.find_by(name: username) || User.create(name: username)
 
-    # User exists in database
-    if !user.blank?
-      tokens = user.tokens - amount; tokens = 0 if tokens < 0
-      user.update_attributes(tokens: tokens)
-      m.twitch "@#{user.name}, you have been penalized and you now have " +
-               "#{user.tokens} #{Tokens::NAME}."
-
-    # User does not exist in database
-    else
-      m.twitch "@#{username} does not have a #{Tokens::NAME} account."
-    end
+    # Deduct amount from number of tokens
+    tokens = user.tokens - amount; tokens = 0 if tokens < 0
+    user.update_attributes(tokens: tokens)
+    m.twitch "SMOrc @#{user.name}, you have been penalized #{amount} " +
+             "#{Tokens::NAME}."
   end
 end
