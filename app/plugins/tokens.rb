@@ -2,16 +2,42 @@
 # tokens.rb
 #
 # Implements a stream currency system.
+#
+# Dependencies:
+# - MisoHelper
+# - ActiveSupport
+# - ActiveRecord
 #===============================================================================
+
+# Base Tokens class to kickstart automated processes and store persistent data.
+class Tokens
+  NAME         = "Tohfoo Tokens"
+  REFRESH_TIME = 15.minutes
+  INCREMENT_BY = 10
+  PENALIZE_BY  = 10
+  SOFT_PENALTY = 5
+
+  # Create thread that refreshes active users every {REFRESH_TIME} units of
+  # time and rewards active users with tokens.
+  def self.init_loyalty_system
+    Thread.new do
+      loop do
+        sleep REFRESH_TIME
+        MisoHelper.refresh_active_users
+        MisoHelper.active_users.each_key do |name|
+          user = User.find_by(name: name) || User.create(name: name)
+          user.update_attributes(tokens: user.tokens + INCREMENT_BY)
+        end
+      end
+    end
+  end
+end
 
 # Display current number of tokens.
 # @command !mytokens
-#-------------------------------------------------------------------------------
-class Tokens
+class Tokens::MyTokens
   include Cinch::Plugin
   match "mytokens"
-
-  NAME = "Tohfoo Tokens"
 
   def execute(m)
     user = User.find_by(name: m.user.nick) || User.create(name: m.user.nick)
@@ -21,22 +47,17 @@ end
 
 # Penalize tokens from a user. Only mods are able to use this command.
 # @command !penalize {username}
-#-------------------------------------------------------------------------------
-class Tokens::Penalty
+class Tokens::Penalize
   include Cinch::Plugin
   match /penalize.*/
 
   def execute(m)
-
-    # Is a mod
     if MisoHelper.is_mod? m.user.nick
       params = m.params[-1].split(" ")
-      penalize(params[1], 10, m) if params.count == 2
-
-    # Is not a mod
+      penalize(params[1], PENALIZE_BY, m) if params.count == 2
     else
       m.twitch "SwiftRage @#{m.user.nick}, you ain't no mod!"
-      penalize(m.user.nick, 5, m)
+      penalize(m.user.nick, SOFT_PENALTY, m)
     end
   end
 
