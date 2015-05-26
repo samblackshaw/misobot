@@ -52,7 +52,7 @@ class MisoHelper
   # Update user in the active users list.
   # @param {string} - name
   def self.update_active_user(name)
-    @@active_users[name] = DateTime.now
+    @@active_users[name] = DateTime.now if name != "jtv"
   end
 
   # Removes a user from the active users list.
