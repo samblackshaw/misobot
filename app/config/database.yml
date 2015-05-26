@@ -1,0 +1,9 @@
+production:
+  adapter:  postgresql
+  dbname:   <%= ENV["HEROKU_DATABASE_NAME"] %>
+  host:     <%= ENV["HEROKU_DATABASE_HOST"] %>
+  port:     <%= ENV["HEROKU_DATABASE_PORT"] %>
+  user:     <%= ENV["HEROKU_DATABASE_USER"] %>
+  password: <%= ENV["HEROKU_DATABASE_PASSWORD"] %>
+  encoding: unicode
+  pool:     5

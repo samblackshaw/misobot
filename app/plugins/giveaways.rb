@@ -1,11 +1,11 @@
 #===============================================================================
-# giveaway.rb
+# giveaways.rb
 #
 # Spits out a URL to a giveaway sign up form. To be replaced with a queue
 # system after the 500 follower giveaway.
 #===============================================================================
 
-class Giveaway
+class Giveaways
   include Cinch::Plugin
 
   match "giveaway"

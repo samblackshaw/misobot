@@ -9,8 +9,23 @@
 
 # Dependencies
 #-------------------------------------------------------------------------------
+
+# Gems
 require "cinch"
-Dir["./plugins/*.rb"].each { |f| require f }
+require "active_record"
+require "yaml"
+require "erb"
+require "pg"
+require "dotenv"; Dotenv.load
+
+# Project files
+$LOAD_PATH << "."
+Dir["app/models/*.rb"].each  { |f| require f }   # Models
+Dir["app/plugins/*.rb"].each { |f| require f }   # Plugins
+
+# Database connection
+db_config = YAML::load(ERB.new(File.read("app/config/database.yml")).result)
+ActiveRecord::Base.establish_connection(db_config["production"])
 
 
 # Implementation of a reply method that circumvents the limitations of Twitch
@@ -37,18 +52,18 @@ bot = Cinch::Bot.new do
     # Twitch
     c.server              = "irc.twitch.tv"
     c.port                = 6667
-    c.messages_per_second = 0.6   # 20 messages per 30 seconds
+    c.messages_per_second = 0.6   # < 20 messages per 30 seconds
     c.ping_interval       = 300   # Twitch ping is every 5 minutes
     c.timeouts.read       = 301   # Something greater than ping interval
 
     # Login
-    c.user     = "misobot"
-    c.nick     = "misobot"
-    c.channels = ["#tohfoo_"]
-    c.password = "oauth:nzrce36n4bgjathx9g8zq2ojsjb0e0"
+    c.user     = ENV["TWITCH_BOT_USER"]
+    c.nick     = ENV["TWITCH_BOT_USER"]
+    c.channels = ["##{ENV['TWITCH_USER']}"]
+    c.password = ENV["TWITCH_OAUTH_TOKEN"]
 
     # Plugins
-    c.plugins.plugins = [Giveaway]
+    c.plugins.plugins = [Giveaways, Tokens, Tokens::Penalty]
   end
 end
 
