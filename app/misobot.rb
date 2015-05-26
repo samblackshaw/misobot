@@ -88,7 +88,9 @@ bot = Cinch::Bot.new do
   end
 
   on :private do |m|
-    MisoHelper.add_mods m.params[-1].split(": ")[-1].split(", ")
+    if m.user.nick == "jtv" && m.params[-1].include?("The moderators")
+      MisoHelper.add_mods m.params[-1].split(": ")[-1].split(", ")
+    end
   end
 end
 
