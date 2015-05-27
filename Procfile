@@ -1,1 +1,1 @@
-bot: bundle exec ruby app/misobot.rb
+web: bundle exec ruby app/misobot.rb
