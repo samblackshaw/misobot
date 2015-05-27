@@ -17,7 +17,7 @@ require "active_support/core_ext"
 require "yaml"
 require "erb"
 require "pg"
-# require "dotenv"; Dotenv.load
+require "dotenv"; Dotenv.load
 
 # Project files
 $LOAD_PATH << "."
