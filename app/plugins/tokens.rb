@@ -11,7 +11,7 @@
 
 # Base Tokens class to kickstart automated processes and store persistent data.
 class Tokens
-  NAME         = "Tohfoo Tokens"
+  NAME         = ENV["TOKENS_NAME"]
   REFRESH_TIME = 15.minutes
   INCREMENT_BY = 10
   PENALIZE_BY  = 10
