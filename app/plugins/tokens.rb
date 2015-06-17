@@ -25,7 +25,7 @@ class Tokens
         sleep REFRESH_TIME
         MisoHelper.refresh_active_users
         MisoHelper.active_users.each_key do |name|
-          user = User.find_by(name: name) || User.create(name: name)
+          user = User.find_or_create_by(name: name)
           user.update_attributes(tokens: user.tokens + INCREMENT_BY)
         end
       end
@@ -34,22 +34,34 @@ class Tokens
 end
 
 # Display current number of tokens.
-# @command !mytokens
+# @command !mytohkens
 class Tokens::MyTokens
   include Cinch::Plugin
-  match "mytokens"
+  match "mytohkens"
 
   def execute(m)
-    user = User.find_by(name: m.user.nick) || User.create(name: m.user.nick)
+    user = User.find_or_create_by(name: m.user.nick)
     m.twitch "@#{user.name}, you have #{user.tokens} #{Tokens::NAME}."
   end
 end
 
-# Penalize tokens from a user. Only mods are able to use this command.
-# @command !penalize {username}
-class Tokens::Penalize
+# Give tokens to another user.
+# @command !givetohkens {username} {amount}
+class Tokens::GiveTokens
   include Cinch::Plugin
-  match /penalize.*/
+  match /givetohkens.*/
+
+  def execute(m)
+    username = m.user.nick.gsub("@", "")
+    user     = User.find_or_create_by(name: username)
+  end
+end
+
+# Penalize tokens from a user. Only mods are able to use this command.
+# @command !penalizetohkens {username}
+class Tokens::PenalizeTokens
+  include Cinch::Plugin
+  match /penalizetohkens.*/
 
   def execute(m)
     if MisoHelper.is_mod? m.user.nick
@@ -66,7 +78,8 @@ class Tokens::Penalize
   # @param {integer} - amount
   # @param {message} - m
   def penalize(username, amount, m)
-    user = User.find_by(name: username) || User.create(name: username)
+    username.gsub!("@", "")
+    user = User.find_or_create_by(name: username)
 
     # Deduct amount from number of tokens
     tokens = user.tokens - amount; tokens = 0 if tokens < 0
