@@ -18,9 +18,8 @@ class MisoSTM
   @@active_users = {}
 
 
-  # Methods pertaining to moderator list
+  # Moderators
   #-----------------------------------------------------------------------------
-
   # Returns list of mods.
   # @return {array}
   def self.mods
@@ -41,9 +40,8 @@ class MisoSTM
   end
 
 
-  # Methods pertaining to active users list
+  # Active Users
   #-----------------------------------------------------------------------------
-
   # Returns list of active users.
   # @return {hash}
   def self.active_users
