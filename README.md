@@ -18,7 +18,11 @@ The bot is written in [Ruby](http://ruby-lang.org) and utilizes popular gems suc
 
 ## Deployment
 
-Pushing to the `production` branch will automatically deploy the bot to its Heroku instance. As of this writing, I haven't found an automated way to run the script upon deployment, so running `heroku run:detached bundle exec ruby app/misobot.rb` afterwards is necessary to make the bot function.
+Pushing to the `production` branch will automatically deploy the bot to its Heroku instance. To actually run the bot, use the command:
+
+    heroku run bundle exec ruby app/misobot.rb
+
+The bot does not automatically run upon deployment so that its use can be limited per stream session.
 
 
 ## Setup

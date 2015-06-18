@@ -50,7 +50,8 @@ bot = Cinch::Bot.new do
     c.password = ENV["TWITCH_OAUTH_TOKEN"]
 
     # Plugins
-    c.plugins.plugins = [Giveaways, Tokens::MyTokens, Tokens::Penalize]
+    c.plugins.plugins = [Giveaways, Tokens::MyTokens, Tokens::GiveTokens,
+      Tokens::PenalizeTokens]
   end
 
   # Request moderator list upon successful connect
@@ -63,13 +64,13 @@ bot = Cinch::Bot.new do
   # Update moderator list upon receiving list of moderators
   on :private do |m|
     if m.user.nick == "jtv" && m.params[-1].include?("The moderators")
-      MisoHelper.add_mods m.params[-1].split(": ")[-1].split(", ")
+      MisoSTM.add_mods m.params[-1].split(": ")[-1].split(", ")
     end
   end
 
   # Update active user timestamp upon receiving a message
   on :message do |m|
-    MisoHelper.update_active_user(m.user.nick)
+    MisoSTM.update_active_user(m.user.nick)
   end
 end
 

@@ -1,70 +1,34 @@
 #===============================================================================
 # misohelper.rb
 #
-# Helper class that stores and manipulates per-stream data.
+# Include this module in a Misobot plugin to use its helper methods.
 #===============================================================================
 
-class MisoHelper
+module MisoHelper
 
-  # Constants
-  #-----------------------------------------------------------------------------
-  IDLE_TIME = 5.minutes
+  # Returns whether a user exists or not, regardless of if an @ handle is used.
+  # @param {string} - username
+  # @return {boolean} - true if exists, false otherwise
+  def user_exists?(username)
+    username.gsub!("@", "")
+    user = User.find_by(name: username)
+    !user.blank?
+  end
 
-
-  # Class variables
-  #-----------------------------------------------------------------------------
-  @@moderators   = [ENV["TWITCH_USER"]]
-  @@active_users = {}
-
-
-  # Methods pertaining to moderator list
-  #-----------------------------------------------------------------------------
-
-  # Returns list of mods.
+  # Returns array of parameters given a message object.
+  # @param  {message} - m
   # @return {array}
-  def self.mods
-    @@moderators
+  def extract_params(m)
+    params = m.params[-1].split(" ")
+    params.shift
+    params
   end
 
-  # Concatenates a list of usernames to moderators list.
-  # @param {array<string>} - mods
-  def self.add_mods(mods)
-    @@moderators += mods
+  # Formats a username for it to be safe to use in methods.
+  # @param  {string} - username
+  # @return {string}
+  def format_username(username)
+    username.downcase.gsub("@", "")
   end
 
-  # Returns whether a username is found in the moderators list.
-  # @param {string} - name
-  # @param {boolean}
-  def self.is_mod?(name)
-    @@moderators.include? name
-  end
-
-
-  # Methods pertaining to active users list
-  #-----------------------------------------------------------------------------
-
-  # Returns list of active users.
-  # @return {hash}
-  def self.active_users
-    @@active_users
-  end
-
-  # Update user in the active users list.
-  # @param {string} - name
-  def self.update_active_user(name)
-    @@active_users[name] = DateTime.now if name != "jtv"
-  end
-
-  # Removes a user from the active users list.
-  # @param {string} - name
-  def self.remove_active_user(name)
-    @@active_users.delete(name)
-  end
-
-  # Checks for idle users and removes them from the active users list.
-  def self.refresh_active_users
-    @@active_users.each do |name, time|
-      self.remove_active_user(name) if time <= IDLE_TIME.ago
-    end
-  end
 end

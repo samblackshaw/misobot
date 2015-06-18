@@ -4,12 +4,13 @@
 # Implements a stream currency system.
 #
 # Dependencies:
-# - MisoHelper
+# - MisoSTM
 # - ActiveSupport
 # - ActiveRecord
 #===============================================================================
 
-# Base Tokens class to kickstart automated processes and store persistent data.
+# Base Tokens class to store tokens-specific data and methods that can be used
+# in all Tokens-related plugins.
 class Tokens
   NAME         = ENV["TOKENS_NAME"]
   REFRESH_TIME = 15.minutes
@@ -23,55 +24,128 @@ class Tokens
     Thread.new do
       loop do
         sleep REFRESH_TIME
-        MisoHelper.refresh_active_users
-        MisoHelper.active_users.each_key do |name|
-          user = User.find_by(name: name) || User.create(name: name)
+        MisoSTM.refresh_active_users
+        MisoSTM.active_users.each_key do |name|
+          user = User.find_or_create_by(name: name)
           user.update_attributes(tokens: user.tokens + INCREMENT_BY)
         end
       end
     end
   end
+
+  # Updates {username}'s balance by {amount}. New balance cannot dip below 0.
+  # @param  {string}  - username
+  # @param  {integer} - amount
+  # @param  {message} - m
+  def self.update(username, amount, m)
+    user        = User.find_or_create_by(name: username)
+    new_balance = user.tokens + amount
+    new_balance = 0 if new_balance < 0
+    user.update_attributes(tokens: new_balance)
+  end
+
+  # Returns whether {username} has at least {amount} in their balance.
+  # @param {string}  - username
+  # @param {integer} - amount
+  def self.has_at_least?(username, amount)
+    user = User.find_by(name: username)
+    if !user.blank?
+      return user.tokens >= amount
+    else
+      return false
+    end
+  end
 end
 
 # Display current number of tokens.
-# @command !mytokens
+# @command !mytohkens
 class Tokens::MyTokens
   include Cinch::Plugin
-  match "mytokens"
+  include MisoHelper
+  match "mytohkens"
 
   def execute(m)
-    user = User.find_by(name: m.user.nick) || User.create(name: m.user.nick)
+    user = User.find_or_create_by(name: format_username(m.user.nick))
     m.twitch "@#{user.name}, you have #{user.tokens} #{Tokens::NAME}."
   end
 end
 
-# Penalize tokens from a user. Only mods are able to use this command.
-# @command !penalize {username}
-class Tokens::Penalize
+# Give tokens to another user.
+# @command !givetohkens {username} {amount}
+class Tokens::GiveTokens
   include Cinch::Plugin
-  match /penalize.*/
+  include MisoHelper
+  match /givetohkens.*/
 
   def execute(m)
-    if MisoHelper.is_mod? m.user.nick
-      params = m.params[-1].split(" ")
-      penalize(params[1], PENALIZE_BY, m) if params.count == 2
-    else
-      m.twitch "SwiftRage @#{m.user.nick}, you ain't no mod!"
-      penalize(m.user.nick, SOFT_PENALTY, m)
+    params = extract_params(m)
+    if params.count == 2
+
+      # Spell out params
+      giver_name    = format_username(m.user.nick)
+      receiver_name = format_username(params.first)
+      xfer_amount   = params.last.to_i
+
+      # Check if {username} exists
+      if user_exists?(receiver_name)
+
+        # Check if giver has required amount
+        if Tokens.has_at_least?(giver_name, xfer_amount)
+          Tokens.update(giver_name, -xfer_amount, m)
+          Tokens.update(receiver_name, xfer_amount, m)
+          m.twitch "@#{giver_name} gave @#{receiver_name} #{xfer_amount} " +
+                   "#{Tokens::NAME}, what a kind person! :)"
+
+        else # {username} doesn't have enough tokens
+          m.twitch "@#{giver_name}, you don't have that many #{Tokens::NAME} " +
+                   "to give!"
+        end
+
+      else # Receiver does not exist
+        m.twitch "#{receiver_name} doesn't have a #{Tokens::NAME} account " +
+                 "yet, boo :("
+      end
+
+    else # User incorrectly typed command
+      m.twitch "Usage: !givetohkens {username} {amount}"
     end
   end
+end
 
-  # Removes {amount} from {username}'s token value. Value cannot dip below 0.
-  # @param {string}  - username
-  # @param {integer} - amount
-  # @param {message} - m
-  def penalize(username, amount, m)
-    user = User.find_by(name: username) || User.create(name: username)
+# Penalize tokens from a user. Only mods are able to use this command.
+# @command !penalizetohkens {username}
+class Tokens::PenalizeTokens
+  include Cinch::Plugin
+  include MisoHelper
+  match /penalizetohkens.*/
 
-    # Deduct amount from number of tokens
-    tokens = user.tokens - amount; tokens = 0 if tokens < 0
-    user.update_attributes(tokens: tokens)
-    m.twitch "SMOrc @#{user.name}, you have been penalized #{amount} " +
-             "#{Tokens::NAME}."
+  def execute(m)
+    if MisoSTM.is_mod? m.user.nick
+      params = extract_params(m)
+      if params.count == 1
+
+        # Spell out params
+        username = format_username(params.first)
+
+        # Penalize if {username} exists
+        if user_exists?(username)
+          Tokens.update(username, -Tokens::PENALIZE_BY, m)
+          m.twitch "SMOrc @#{username}, you have been penalized " +
+                   "#{Tokens::PENALIZE_BY} #{Tokens::NAME}."
+
+        else # {username} doesn't exist
+          m.twitch "Ayo, #{username} doesn't have a #{Tokens::NAME} account"
+        end
+
+      else # Mod incorrectly typed command
+        m.twitch "Usage: !penalizetohkens {username}"
+      end
+
+    else # User is not a mod
+      m.twitch "SwiftRage @#{m.user.nick}, you ain't no mod!"
+      Tokens.update(m.user.nick, -Tokens::SOFT_PENALTY, m)
+      m.twitch "SMOrc @#{m.user.nick}, you have been penalized " +
+               "#{Tokens::SOFT_PENALTY} #{Tokens::NAME}"
+    end
   end
 end
