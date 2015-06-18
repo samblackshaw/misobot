@@ -65,7 +65,7 @@ class Tokens::MyTokens
 
   def execute(m)
     user = User.find_or_create_by(name: format_username(m.user.nick))
-    m.twitch "@#{user.name}, you have #{user.tokens} #{Tokens::NAME}."
+    m.twitch "@#{user.name}, you have #{user.tokens} #{Tokens::NAME}"
   end
 end
 
