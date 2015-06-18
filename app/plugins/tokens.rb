@@ -36,8 +36,7 @@ class Tokens
   # Updates {username}'s balance by {amount}. New balance cannot dip below 0.
   # @param  {string}  - username
   # @param  {integer} - amount
-  # @param  {message} - m
-  def self.update(username, amount, m)
+  def self.update(username, amount)
     user        = User.find_or_create_by(name: username)
     new_balance = user.tokens + amount
     new_balance = 0 if new_balance < 0
@@ -66,7 +65,7 @@ class Tokens::MyTokens
 
   def execute(m)
     user = User.find_or_create_by(name: format_username(m.user.nick))
-    m.twitch "@#{user.name}, you have #{user.tokens} #{Tokens::NAME}."
+    m.twitch "@#{user.name}, you have #{user.tokens} #{Tokens::NAME}"
   end
 end
 
@@ -91,8 +90,8 @@ class Tokens::GiveTokens
 
         # Check if giver has required amount
         if Tokens.has_at_least?(giver_name, xfer_amount)
-          Tokens.update(giver_name, -xfer_amount, m)
-          Tokens.update(receiver_name, xfer_amount, m)
+          Tokens.update(giver_name, -xfer_amount)
+          Tokens.update(receiver_name, xfer_amount)
           m.twitch "@#{giver_name} gave @#{receiver_name} #{xfer_amount} " +
                    "#{Tokens::NAME}, what a kind person! :)"
 
@@ -129,7 +128,7 @@ class Tokens::PenalizeTokens
 
         # Penalize if {username} exists
         if user_exists?(username)
-          Tokens.update(username, -Tokens::PENALIZE_BY, m)
+          Tokens.update(username, -Tokens::PENALIZE_BY)
           m.twitch "SMOrc @#{username}, you have been penalized " +
                    "#{Tokens::PENALIZE_BY} #{Tokens::NAME}."
 
@@ -143,7 +142,7 @@ class Tokens::PenalizeTokens
 
     else # User is not a mod
       m.twitch "SwiftRage @#{m.user.nick}, you ain't no mod!"
-      Tokens.update(m.user.nick, -Tokens::SOFT_PENALTY, m)
+      Tokens.update(m.user.nick, -Tokens::SOFT_PENALTY)
       m.twitch "SMOrc @#{m.user.nick}, you have been penalized " +
                "#{Tokens::SOFT_PENALTY} #{Tokens::NAME}"
     end
