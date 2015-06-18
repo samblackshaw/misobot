@@ -1,10 +1,11 @@
 #===============================================================================
-# misohelper.rb
+# misostm.rb
 #
-# Helper class that stores and manipulates per-stream data.
+# Stands for Miso Short Term Memory. Helper class that stores and manipulates
+# data for the duration of a script execution.
 #===============================================================================
 
-class MisoHelper
+class MisoSTM
 
   # Constants
   #-----------------------------------------------------------------------------

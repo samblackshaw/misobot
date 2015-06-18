@@ -4,7 +4,7 @@
 # Implements a stream currency system.
 #
 # Dependencies:
-# - MisoHelper
+# - MisoSTM
 # - ActiveSupport
 # - ActiveRecord
 #===============================================================================
@@ -23,8 +23,8 @@ class Tokens
     Thread.new do
       loop do
         sleep REFRESH_TIME
-        MisoHelper.refresh_active_users
-        MisoHelper.active_users.each_key do |name|
+        MisoSTM.refresh_active_users
+        MisoSTM.active_users.each_key do |name|
           user = User.find_or_create_by(name: name)
           user.update_attributes(tokens: user.tokens + INCREMENT_BY)
         end
@@ -64,7 +64,7 @@ class Tokens::PenalizeTokens
   match /penalizetohkens.*/
 
   def execute(m)
-    if MisoHelper.is_mod? m.user.nick
+    if MisoSTM.is_mod? m.user.nick
       params = m.params[-1].split(" ")
       penalize(params[1], PENALIZE_BY, m) if params.count == 2
     else
