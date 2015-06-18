@@ -50,7 +50,7 @@ bot = Cinch::Bot.new do
     c.password = ENV["TWITCH_OAUTH_TOKEN"]
 
     # Plugins
-    c.plugins.plugins = [Giveaways, Tokens::MyTokens, Tokens::GiveTokens,
+    c.plugins.plugins = [Tokens::MyTokens, Tokens::GiveTokens,
       Tokens::PenalizeTokens]
   end
 
