@@ -88,16 +88,29 @@ class Tokens::GiveTokens
       # Check if {username} exists
       if user_exists?(receiver_name)
 
-        # Check if giver has required amount
-        if Tokens.has_at_least?(giver_name, xfer_amount)
-          Tokens.update(giver_name, -xfer_amount)
-          Tokens.update(receiver_name, xfer_amount)
-          m.twitch "@#{giver_name} gave @#{receiver_name} #{xfer_amount} " +
-                   "#{Tokens::NAME}, what a kind person! :)"
+        # Check if transfer amount is a positive integer or naw
+        if xfer_amount > 0
 
-        else # {username} doesn't have enough tokens
-          m.twitch "@#{giver_name}, you don't have that many #{Tokens::NAME} " +
-                   "to give!"
+          # Check if giver has required amount
+          if Tokens.has_at_least?(giver_name, xfer_amount)
+            Tokens.update(giver_name, -xfer_amount)
+            Tokens.update(receiver_name, xfer_amount)
+            m.twitch "@#{giver_name} gave @#{receiver_name} #{xfer_amount} " +
+                     "#{Tokens::NAME}, what a kind person! :)"
+
+          else # {username} doesn't have enough tokens
+            m.twitch "@#{giver_name}, you don't have that many " +
+                     "#{Tokens::NAME} to give!"
+          end
+
+        # Catch people trolling
+        elsif xfer_amount == 0
+          m.twitch "@#{giver_name}, stop trolling pls or I will destroy"
+
+        # Catch people trying to exploit the system
+        else
+          m.twitch "Nice try, @#{giver_name}, get timed out"
+          m.twitch "/timeout #{giver_name} 60"
         end
 
       else # Receiver does not exist
@@ -141,7 +154,7 @@ class Tokens::PenalizeTokens
       end
 
     else # User is not a mod
-      m.twitch "SwiftRage @#{m.user.nick}, you ain't no mod!"
+      m.twitch "SwiftRage @#{m.user.nick}, you ain't no mod! Get penalized"
       Tokens.update(m.user.nick, -Tokens::SOFT_PENALTY)
       m.twitch "SMOrc @#{m.user.nick}, you have been penalized " +
                "#{Tokens::SOFT_PENALTY} #{Tokens::NAME}"
