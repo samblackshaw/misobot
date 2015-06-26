@@ -50,8 +50,7 @@ bot = Cinch::Bot.new do
     c.password = ENV["TWITCH_OAUTH_TOKEN"]
 
     # Plugins
-    c.plugins.plugins = [Tokens::MyTokens, Tokens::GiveTokens,
-      Tokens::PenalizeTokens]
+    c.plugins.plugins = [Tokens::MyTokens, Tokens::PenalizeTokens]
   end
 
   # Request moderator list upon successful connect
