@@ -14,6 +14,38 @@
 class Queues
   @@challengers      = []
   @@challengers_open = false
+
+  def self.challengers
+    @@challengers
+  end
+
+  def self.challengers_open?
+    @@challengers_open
+  end
+
+  def self.add_challenger(user)
+    @@challengers << user
+  end
+
+  def self.remove_challenger(user)
+    @@challengers.delete user
+  end
+
+  def self.open_challengers_line
+    @@challengers_open = true
+  end
+
+  def self.close_challengers_line
+    @@challengers_open = false
+  end
+
+  def self.clear_challengers_line
+    @@challengers = []
+  end
+
+  def self.next_challenger
+    @@challengers.shift
+  end
 end
 
 # Open line.
@@ -30,8 +62,8 @@ class Queues::Open
     if user == ENV["TWITCH_USER"]
 
       # Check if line is closed
-      if !Queues.challengers_open
-        Queues.challengers_open = true
+      if !Queues.challengers_open?
+        Queues.open_challengers_line
         m.twitch "Line's open!"
       else
         m.twitch "Line's already open tho"
@@ -56,8 +88,8 @@ class Queues::Close
     if user == ENV["TWITCH_USER"]
 
       # Check if line is open
-      if Queues.challengers_open
-        Queues.challengers_open = false
+      if Queues.challengers_open?
+        Queues.close_challengers_line
         m.twitch "Line's closed! Womp womp"
       else
         m.twitch "Line's already closed tho"
@@ -80,7 +112,7 @@ class Queues::Clear
 
     # Only streamer can use command
     if user == ENV["TWITCH_USER"]
-      Queues.challengers = []
+      Queues.clear_challengers_line
       m.twitch "Line has been cleared-a-roonies"
     else
       m.twitch "Sorry, only #{ENV['TWITCH_USER']} can use this command"
@@ -98,17 +130,11 @@ class Queues::Line
   def execute(m)
     user = format_username(m.user.nick)
 
-    # Make sure the line is open
-    if Queues.challengers_open
-
-      # Check to see if there are people in line
-      if Queues.challengers.count > 0
-        m.twitch "The challenger line is: #{Queues.challengers.join(', ')}"
-      else
-        m.twitch "Line's empty, now's your chance :)"
-      end
+    # Check to see if there are people in line
+    if Queues.challengers.count > 0
+      m.twitch "The challenger line is: #{Queues.challengers.join(', ')}"
     else
-      m.twitch "Sorry, challenger line is currently not open :("
+      m.twitch "Line's empty!"
     end
   end
 end
@@ -126,13 +152,11 @@ class Queues::Next
     # Only streamer can use command
     if user == ENV["TWITCH_USER"]
 
-      # Make sure the line is open
-      if Queues.challengers_open
-        Queues.shift
-        m.twitch "Next up, we have @#{Queues.challengers.first}, please be " +
-                 "ready :)"
+      next_challenger = Queues.next_challenger
+      if !next_challenger.blank?
+        m.twitch "Next up, we have @#{next_challenger}, please be ready :)"
       else
-        m.twitch "Line isn't open yet tho"
+        m.twitch "We're at the end of the line, peeps"
       end
     else
       m.twitch "Sorry, only #{ENV['TWITCH_USER']} can use this command"
@@ -151,16 +175,16 @@ class Queues::Join
     user = format_username(m.user.nick)
 
     # Make sure the line is open
-    if Queues.challengers_open
+    if Queues.challengers_open?
 
       # Make sure the line doesn't have the user
       if !Queues.challengers.include? user
-        Queues.challengers << user
-        m.twitch "@#{user.name}, you've been added to the challenger line! " +
+        Queues.add_challenger user
+        m.twitch "@#{user}, you've been added to the challenger line! " +
                  "You are currently #{Queues.challengers.count.ordinalize} " +
                  "in line"
       else
-        m.twitch "@#{user.name}, you in da challenger line already doe. Wait " +
+        m.twitch "@#{user}, you in da challenger line already doe. Wait " +
                  "yo turn"
       end
     else
@@ -179,19 +203,13 @@ class Queues::Unjoin
   def execute(m)
     user = format_username(m.user.nick)
 
-    # Make sure the line is open
-    if Queues.challengers_open
-
-      # Make sure the line has the user
-      if Queues.challengers.include? user
-        Queues.challengers.delete user
-        m.twitch "#@#{user.name}, you've been successfully removed from the " +
-                 "challenger line"
-      else
-        m.twitch "@#{user.name}, you're not in line"
-      end
+    # Make sure the line has the user
+    if Queues.challengers.include? user
+      Queues.remove_challenger user
+      m.twitch "@#{user}, you've been successfully removed from the " +
+               "challenger line"
     else
-      m.twitch "Line is closed, so no need to !unjoin, @#{user.name}"
+      m.twitch "@#{user}, you're not in line, so you good"
     end
   end
 end
