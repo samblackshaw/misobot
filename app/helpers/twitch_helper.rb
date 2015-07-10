@@ -15,4 +15,8 @@ class Cinch::Message
                  "@#{bot.config.user}.tmi.twitch.tv PRIVMSG " +
                  "##{ENV['TWITCH_USER']} :#{message}"
   end
+
+  def twitch_colored(message)
+    twitch("/me #{message}")
+  end
 end
