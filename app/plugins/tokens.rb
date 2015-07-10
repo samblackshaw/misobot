@@ -65,7 +65,7 @@ class Tokens::MyTokens
 
   def execute(m)
     user = User.find_or_create_by(name: format_username(m.user.nick))
-    m.twitch "@#{user.name}, you have #{user.tokens} #{Tokens::NAME}"
+    m.twitch_colored "@#{user.name}, you have #{user.tokens} #{Tokens::NAME}"
   end
 end
 
@@ -95,31 +95,31 @@ class Tokens::GiveTokens
           if Tokens.has_at_least?(giver_name, xfer_amount)
             Tokens.update(giver_name, -xfer_amount)
             Tokens.update(receiver_name, xfer_amount)
-            m.twitch "@#{giver_name} gave @#{receiver_name} #{xfer_amount} " +
-                     "#{Tokens::NAME}, what a kind person! :)"
+            m.twitch_colored "@#{giver_name} gave @#{receiver_name} " +
+              "#{xfer_amount} #{Tokens::NAME}, what a kind person! :)"
 
           else # {username} doesn't have enough tokens
-            m.twitch "@#{giver_name}, you don't have that many " +
+            m.twitch_colored "@#{giver_name}, you don't have that many " +
                      "#{Tokens::NAME} to give!"
           end
 
         # Catch people trolling
         elsif xfer_amount == 0
-          m.twitch "@#{giver_name}, stop trolling pls or I will destroy"
+          m.twitch_colored "@#{giver_name}, stop trolling pls or I will destroy"
 
         # Catch people trying to exploit the system
         else
-          m.twitch "Nice try, @#{giver_name}, get timed out"
-          m.twitch "/timeout #{giver_name} 60"
+          m.twitch_colored "Nice try, @#{giver_name}, get timed out"
+          m.twitch_colored "/timeout #{giver_name} 60"
         end
 
       else # Receiver does not exist
-        m.twitch "#{receiver_name} doesn't have a #{Tokens::NAME} account " +
-                 "yet, boo :("
+        m.twitch_colored "#{receiver_name} doesn't have a #{Tokens::NAME} " +
+          "account yet, boo :("
       end
 
     else # User incorrectly typed command
-      m.twitch "Usage: !givetohkens {username} {amount}"
+      m.twitch_colored "Usage: !givetohkens {username} {amount}"
     end
   end
 end
@@ -142,22 +142,24 @@ class Tokens::PenalizeTokens
         # Penalize if {username} exists
         if user_exists?(username)
           Tokens.update(username, -Tokens::PENALIZE_BY)
-          m.twitch "SMOrc @#{username}, you have been penalized " +
-                   "#{Tokens::PENALIZE_BY} #{Tokens::NAME}."
+          m.twitch_colored "SMOrc @#{username}, you have been penalized " +
+            "#{Tokens::PENALIZE_BY} #{Tokens::NAME}."
 
         else # {username} doesn't exist
-          m.twitch "Ayo, #{username} doesn't have a #{Tokens::NAME} account"
+          m.twitch_colored "Ayo, #{username} doesn't have a #{Tokens::NAME} " +
+            "account"
         end
 
       else # Mod incorrectly typed command
-        m.twitch "Usage: !penalizetohkens {username}"
+        m.twitch_colored "Usage: !penalizetohkens {username}"
       end
 
     else # User is not a mod
-      m.twitch "SwiftRage @#{m.user.nick}, you ain't no mod! Get penalized"
+      m.twitch_colored "SwiftRage @#{m.user.nick}, you ain't no mod! Get " +
+        "penalized"
       Tokens.update(m.user.nick, -Tokens::SOFT_PENALTY)
-      m.twitch "SMOrc @#{m.user.nick}, you have been penalized " +
-               "#{Tokens::SOFT_PENALTY} #{Tokens::NAME}"
+      m.twitch_colored "SMOrc @#{m.user.nick}, you have been penalized " +
+        "#{Tokens::SOFT_PENALTY} #{Tokens::NAME}"
     end
   end
 end
