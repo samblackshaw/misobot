@@ -12,6 +12,19 @@
 class Stream
 end
 
+# Prompt display of available commands.
+# @command !commands
+class Stream::Commands
+  include Cinch::Plugin
+  include MisoHelper
+  match "commands"
+
+  def execute(m)
+    m.twitch_colored "To see available commands, please check the channel " +
+      "description :)"
+  end
+end
+
 # Display social media outlets for stream.
 # @command !social
 class Stream::Social
