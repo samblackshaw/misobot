@@ -139,6 +139,27 @@ class Queues::Line
   end
 end
 
+# See spot in line.
+# @command !spot
+class Queues::Spot
+  include Cinch::Plugin
+  include MisoHelper
+  match "spot"
+
+  def execute(m)
+    user = format_username(m.user.nick)
+
+    # Get index of your username in challengers list
+    spot = Queues.challengers.find_index(user)
+
+    if !spot.nil?
+      m.twitch_colored "@#{user}, you are #{(spot + 1).ordinalize} in line"
+    else
+      m.twitch_colored "@#{user}, you ain't in line doe"
+    end
+  end
+end
+
 # Move line.
 # @command !next
 class Queues::Next
