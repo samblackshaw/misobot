@@ -54,7 +54,7 @@ bot = Cinch::Bot.new do
       Tokens::MyTokens, Tokens::PenalizeTokens,
       Queues::Open, Queues::Close, Queues::Clear, Queues::Line, Queues::Next,
       Queues::Join, Queues::Unjoin, Queues::Spot,
-      Stream::Social
+      Stream::Social, Stream::Shoutout
     ]
   end
 
