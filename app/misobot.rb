@@ -53,7 +53,8 @@ bot = Cinch::Bot.new do
     c.plugins.plugins = [
       Tokens::MyTokens, Tokens::PenalizeTokens,
       Queues::Open, Queues::Close, Queues::Clear, Queues::Line, Queues::Next,
-      Queues::Join, Queues::Unjoin, Queues::Spot
+      Queues::Join, Queues::Unjoin, Queues::Spot,
+      Stream::Social
     ]
   end
 

@@ -13,7 +13,8 @@ The bot is written in [Ruby](http://ruby-lang.org) and utilizes popular gems suc
 * Persistent data storage using [Heroku](http://heroku.com) PostgreSQL databases
 * Automated viewer loyalty system (tokens)
 * Viewer line management
-* Giveaway raffles (to be implemented...)
+* User acknowledgement commands
+* General information commands
 
 
 ## Deployment
