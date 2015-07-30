@@ -25,6 +25,18 @@ class Stream::Commands
   end
 end
 
+# Display the uptime since Misobot has been started.
+# @command !uptime
+class Stream::Uptime
+  include Cinch::Plugin
+  include MisoHelper
+  match "uptime"
+
+  def execute(m)
+    m.twitch_colored "Uptime: #{time_diff(MisoSTM::START_TIME, Time.now)}"
+  end
+end
+
 # Display social media outlets for stream.
 # @command !social
 class Stream::Social

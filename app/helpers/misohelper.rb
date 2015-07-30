@@ -31,4 +31,19 @@ module MisoHelper
     username.downcase.gsub("@", "")
   end
 
+  # Returns the hours:minutes:seconds difference between two Time objects.
+  # http://stackoverflow.com/questions/19595840/rails-get-the-time-difference-in-hours-minutes-and-seconds
+  # @param  {Time} - start_time
+  # @param  {Time} - end_time
+  # @return {string}
+  def time_diff(start_time, end_time)
+    seconds_diff  = (start_time - end_time).to_i.abs
+    hours         = seconds_diff / 3600
+    seconds_diff -= hours * 3600
+    minutes       = seconds_diff / 60
+    seconds_diff -= minutes * 60
+    seconds       = seconds_diff
+    "#{hours.to_s.rjust(2, '0')}:#{minutes.to_s.rjust(2, '0')}:#{seconds.to_s.rjust(2, '0')}"
+  end
+
 end
