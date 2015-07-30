@@ -9,7 +9,8 @@ class MisoSTM
 
   # Constants
   #-----------------------------------------------------------------------------
-  IDLE_TIME = 5.minutes
+  IDLE_TIME  = 5.minutes
+  START_TIME = Time.now
 
 
   # Class variables

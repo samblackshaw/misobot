@@ -13,7 +13,8 @@ The bot is written in [Ruby](http://ruby-lang.org) and utilizes popular gems suc
 * Persistent data storage using [Heroku](http://heroku.com) PostgreSQL databases
 * Automated viewer loyalty system (tokens)
 * Viewer line management
-* Giveaway raffles (to be implemented...)
+* User acknowledgement commands
+* General information commands
 
 
 ## Deployment
@@ -33,6 +34,9 @@ After cloning the repository, you must create a `.env` file in the root director
     TWITCH_BOT_USER={Twitch Bot Username}
     TWITCH_OAUTH_TOKEN={OAuth Token, get it from http://www.twitchapps.com/tmi/}
     TOKENS_NAME={Stream Currency Name}
+    FOLLOWER_NAME={Name of Singular Channel Follower}
+    TWITTER_URL={Twitter URL}
+    YOUTUBE_URL={YouTube URL}
     HEROKU_DATABASE_NAME={PG Database Name}
     HEROKU_DATABASE_HOST={PG Database Host}
     HEROKU_DATABASE_PORT={PG Database Port}
