@@ -15,7 +15,7 @@ class MisoSTM
 
   # Class variables
   #-----------------------------------------------------------------------------
-  @@moderators   = [ENV["TWITCH_USER"]]
+  @@moderators   = ENV["MODERATORS"].split(", ")
   @@active_users = {}
 
 
