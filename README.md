@@ -35,6 +35,7 @@ After cloning the repository, you must create a `.env` file in the root director
     TWITCH_OAUTH_TOKEN={OAuth Token, get it from http://www.twitchapps.com/tmi/}
     TOKENS_NAME={Stream Currency Name}
     FOLLOWER_NAME={Name of Singular Channel Follower}
+    MODERATORS={Mods, Comma + Space Separated}
     TWITTER_URL={Twitter URL}
     YOUTUBE_URL={YouTube URL}
     HEROKU_DATABASE_NAME={PG Database Name}

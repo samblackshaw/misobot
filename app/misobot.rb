@@ -58,10 +58,8 @@ bot = Cinch::Bot.new do
     ]
   end
 
-  # Request moderator list upon successful connect
+  # Triggers upon connect
   on :connect do |m|
-    m.twitch "/mods"
-
     Tokens.init_loyalty_system if Tokens
   end
 
