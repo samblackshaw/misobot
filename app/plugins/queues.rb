@@ -49,11 +49,11 @@ class Queues
 end
 
 # Open line.
-# @command !openline
-class Queues::Open
+# @command !openlist
+class Queues::OpenList
   include Cinch::Plugin
   include MisoHelper
-  match "openline"
+  match "openlist"
 
   def execute(m)
     user = format_username(m.user.nick)
@@ -64,7 +64,7 @@ class Queues::Open
       # Check if line is closed
       if !Queues.challengers_open?
         Queues.open_challengers_line
-        m.twitch_colored "Line's open!"
+        m.twitch_colored "Challenger line is open!"
       else
         m.twitch_colored "Line's already open tho"
       end
@@ -75,19 +75,14 @@ class Queues::Open
 end
 
 # Close line.
-# @command !closeline
-class Queues::Close
+# @command !closelist
+class Queues::CloseList
   include Cinch::Plugin
   include MisoHelper
-  match "closeline"
+  match "closelist"
 
   def execute(m)
-    user = format_username(m.user.nick)
-
-    # Only streamer can use command
-    if user == ENV["TWITCH_USER"]
-
-      # Check if line is open
+    if MisoSTM.is_mod? m.user.nick
       if Queues.challengers_open?
         Queues.close_challengers_line
         m.twitch_colored "Line's closed! Womp womp"
@@ -95,17 +90,17 @@ class Queues::Close
         m.twitch_colored "Line's already closed tho"
       end
     else
-      m.twitch_colored "Sorry, only #{ENV['TWITCH_USER']} can use this command"
+      m.twitch_colored "Sorry, only mods can use this command"
     end
   end
 end
 
 # Clear line.
-# @command !clearline
-class Queues::Clear
+# @command !clearlist
+class Queues::ClearList
   include Cinch::Plugin
   include MisoHelper
-  match "clearline"
+  match "clearlist"
 
   def execute(m)
     user = format_username(m.user.nick)
@@ -121,11 +116,11 @@ class Queues::Clear
 end
 
 # Show line.
-# @command !line
-class Queues::Line
+# @command !list
+class Queues::List
   include Cinch::Plugin
   include MisoHelper
-  match "line"
+  match "list"
 
   def execute(m)
     user = format_username(m.user.nick)
@@ -161,26 +156,20 @@ class Queues::Spot
 end
 
 # Move line.
-# @command !next
-class Queues::Next
+# @command !callnext
+class Queues::CallNext
   include Cinch::Plugin
   include MisoHelper
-  match "next"
+  match "callnext"
 
   def execute(m)
-    user = format_username(m.user.nick)
-
-    # Only streamer can use command
-    if user == ENV["TWITCH_USER"]
-
+    if MisoSTM.is_mod? m.user.nick
       next_challenger = Queues.next_challenger
       if !next_challenger.blank?
-        m.twitch_colored "Next up, we have @#{next_challenger}, please be ready :)"
+        m.twitch_colored "@#{next_challenger}, you're now up :)"
       else
         m.twitch_colored "We're at the end of the line, peeps"
       end
-    else
-      m.twitch_colored "Sorry, only #{ENV['TWITCH_USER']} can use this command"
     end
   end
 end
@@ -215,11 +204,11 @@ class Queues::Join
 end
 
 # Leave challenger line.
-# @command !unjoin
-class Queues::Unjoin
+# @command !leave
+class Queues::Leave
   include Cinch::Plugin
   include MisoHelper
-  match "unjoin"
+  match "leave"
 
   def execute(m)
     user = format_username(m.user.nick)
