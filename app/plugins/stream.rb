@@ -45,13 +45,9 @@ class Stream::Social
   match "social"
 
   def execute(m)
-    if MisoSTM.is_mod? m.user.nick
-      m.twitch_colored "Keep up with #{ENV['TWITCH_USER']} when we're not " +
-        "live at #{ENV['TWITTER_URL']} and watch highlights and videos over " +
-        "at #{ENV['YOUTUBE_URL']}!"
-    else
-      m.twitch_colored "SwiftRage Sorry, only mods can use this command"
-    end
+    m.twitch_colored "Keep up with #{ENV['TWITCH_USER']} when we're not " +
+      "live at #{ENV['TWITTER_URL']} and watch highlights and videos over " +
+      "at #{ENV['YOUTUBE_URL']}!"
   end
 end
 

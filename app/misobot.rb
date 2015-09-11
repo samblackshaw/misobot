@@ -52,8 +52,8 @@ bot = Cinch::Bot.new do
     # Plugins
     c.plugins.plugins = [
       Tokens::MyTokens, Tokens::PenalizeTokens,
-      Queues::Open, Queues::Close, Queues::Clear, Queues::Line, Queues::Next,
-      Queues::Join, Queues::Unjoin, Queues::Spot,
+      Queues::OpenList, Queues::CloseList, Queues::ClearList, Queues::List,
+      Queues::CallNext, Queues::Join, Queues::Leave, Queues::Spot,
       Stream::Commands, Stream::Social, Stream::Shoutout, Stream::Uptime
     ]
   end
