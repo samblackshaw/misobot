@@ -43,3 +43,5 @@ After cloning the repository, you must create a `.env` file in the root director
     HEROKU_DATABASE_PASSWORD={PG Database Password}
 
 Set the database env variables to correspond to a local or remote PostgreSQL database.
+
+Make sure you have icu4c installed on your machine prior to running `npm install`. If you have Homebrew, this can be done by simply running `brew install icu4c && brew link icu4c --force`.

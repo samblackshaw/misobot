@@ -1,0 +1,24 @@
+{
+  "name": "misobot",
+  "version": "1.0.0",
+  "description": "A Twitch chat bot",
+  "main": "misobot.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikiliu/misobot.git"
+  },
+  "author": "Niki Liu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikiliu/misobot/issues"
+  },
+  "homepage": "https://github.com/nikiliu/misobot#readme",
+  "dependencies": {
+    "coffee-script": "^1.10.0",
+    "dotenv": "^1.2.0",
+    "irc": "^0.4.0"
+  }
+}
