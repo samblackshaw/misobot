@@ -19,6 +19,7 @@
   "dependencies": {
     "coffee-script": "^1.10.0",
     "dotenv": "^1.2.0",
-    "irc": "^0.4.0"
+    "irc": "^0.4.0",
+    "underscore": "^1.8.3"
   }
 }
