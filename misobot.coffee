@@ -103,6 +103,7 @@ client.addListener "message", (from, to, message) ->
       live at #{process.env.TWITTER_URL} and watch videos over at
       #{process.env.YOUTUBE_URL}!"
 
+  # Display a message encouraging users to check out another channel.
   else if /^!shoutout \S*$/.test message
     if isMod from
       params = getParams message
@@ -111,27 +112,32 @@ client.addListener "message", (from, to, message) ->
         client.speak "Show #{user} some #{process.env.FOLLOWER_NAME} lovin'
           over at http://twitch.tv/#{user}! <3"
 
+  # Open the list.
   else if /^!openlist$/.test message
     if isStreamer from
       queueOpen = true
       client.speak "List is open, type !join to join"
 
+  # Close the list.
   else if /^!closelist$/.test message
     if isMod from
       queueOpen = false
       client.speak "List is now closed, womp womp CorgiDerp"
 
+  # Clear the list.
   else if /^!clearlist$/.test message
     if isStreamer from
       queue = []
       client.speak "I cleared the list, master <3"
 
+  # Display the list.
   else if /^!list$/.test message
     if queue.length > 0
       client.speak "Current list is: #{queue.join ', '}"
     else
       client.speak "List is empty :("
 
+  # Move the list along.
   else if /^!next$/.test message
     if isStreamer from
       queueCurrUser = queue.shift()
@@ -140,6 +146,7 @@ client.addListener "message", (from, to, message) ->
       else
         client.speak "We're at the end of the list ShadyLulu"
 
+  # Add a user to the list, if it's open.
   else if /^!join$/.test message
     if queueOpen
       if !queue.indexOf(from) > -1
@@ -151,6 +158,7 @@ client.addListener "message", (from, to, message) ->
     else
       client.speak "Sorry, the list isn't open right now"
 
+  # Remove a user from the list.
   else if /^!leave$/.test message
     if queue.indexOf(from) > -1
       queue.splice queue.indexOf(from), 1
