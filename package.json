@@ -23,6 +23,8 @@
     "irc": "^0.4.0",
     "kerberos": "0.0.17",
     "mongodb": "^2.0.48",
+    "mongoose": "^4.2.6",
+    "mongoose-findorcreate": "^0.1.2",
     "underscore": "^1.8.3"
   }
 }
