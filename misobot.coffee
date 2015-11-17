@@ -25,7 +25,7 @@ mongoose.connect process.env.MONGOLAB_URI
 
 
 # Session Variables
-#-----------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 startTime     = Date.now()
 queue         = []
 queueOpen     = false
@@ -34,7 +34,7 @@ activeUsers   = {}
 
 
 # Initialize Misobot
-#-----------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 client = new irc.Client "irc.twitch.tv", process.env.TWITCH_BOT_USER,
   userName: process.env.TWITCH_BOT_USER
   password: process.env.TWITCH_OAUTH_TOKEN
@@ -71,7 +71,7 @@ setInterval () ->
 
 
 # Helper Methods
-#-----------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Determines whether or not a given user is the streamer.
 # @param {user:string}
 # @return {boolean}
@@ -113,7 +113,7 @@ timeDiff = (date1, date2) ->
 
 
 # Commands
-#-----------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 client.addListener "message", (from, to, message) ->
   from = formatUser from
   to   = formatUser to
