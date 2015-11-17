@@ -3,9 +3,9 @@ Misobot
 
 ## Overview
 
-Misobot is a [Cinch](https://github.com/cinchrb/cinch)-based [Twitch](http://twitch.tv) bot originally designed for the [Tohfoo](http://twitch.tv/tohfoo_/profile) channel.
+Misobot is a [Twitch](http://twitch.tv) bot originally designed for the [Tohfoo](http://twitch.tv/tohfoo_/profile) channel.
 
-The bot is written in [Ruby](http://ruby-lang.org) and utilizes popular gems such as [ActiveRecord](https://github.com/rails/rails/tree/master/activerecord) and [ActiveSupport](https://github.com/rails/rails/tree/master/activesupport).
+The bot is written in [Node](https://nodejs.org).
 
 
 ## Features
@@ -19,11 +19,9 @@ The bot is written in [Ruby](http://ruby-lang.org) and utilizes popular gems suc
 
 ## Deployment
 
-Pushing to the `production` branch will automatically deploy the bot to its Heroku instance. To actually run the bot, use the command:
+Pushing to the `production` branch will automatically deploy the bot to its Heroku instance.
 
-    heroku run bundle exec ruby app/misobot.rb
-
-The bot does not automatically run upon deployment so that its use can be limited per stream session.
+The bot should not automatically run upon deployment so that its use can be limited per stream session.
 
 
 ## Setup
@@ -45,3 +43,5 @@ After cloning the repository, you must create a `.env` file in the root director
     HEROKU_DATABASE_PASSWORD={PG Database Password}
 
 Set the database env variables to correspond to a local or remote PostgreSQL database.
+
+Make sure you have icu4c installed on your machine prior to running `npm install`. If you have Homebrew, this can be done by simply running `brew install icu4c && brew link icu4c --force`.
