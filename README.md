@@ -10,7 +10,6 @@ The bot is written in [Node](https://nodejs.org).
 
 ## Features
 
-* Persistent data storage using [Heroku](http://heroku.com) PostgreSQL databases
 * Automated viewer loyalty system (tokens)
 * Viewer line management
 * User acknowledgement commands
@@ -33,15 +32,11 @@ After cloning the repository, you must create a `.env` file in the root director
     TWITCH_OAUTH_TOKEN={OAuth Token, get it from http://www.twitchapps.com/tmi/}
     TOKENS_NAME={Stream Currency Name}
     FOLLOWER_NAME={Name of Singular Channel Follower}
+    MONGOLAB_URI={MongoDB String}
     MODERATORS={Mods, Comma + Space Separated}
     TWITTER_URL={Twitter URL}
     YOUTUBE_URL={YouTube URL}
-    HEROKU_DATABASE_NAME={PG Database Name}
-    HEROKU_DATABASE_HOST={PG Database Host}
-    HEROKU_DATABASE_PORT={PG Database Port}
-    HEROKU_DATABASE_USER={PG Database User}
-    HEROKU_DATABASE_PASSWORD={PG Database Password}
 
-Set the database env variables to correspond to a local or remote PostgreSQL database.
+Set the database env variables to correspond to a local or remote MongoDB database.
 
 Make sure you have icu4c installed on your machine prior to running `npm install`. If you have Homebrew, this can be done by simply running `brew install icu4c && brew link icu4c --force`.
