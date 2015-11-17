@@ -64,6 +64,9 @@ setInterval () ->
         user.tokens ?= 0
         user.tokens += 10
         user.save()
+
+    # Otherwise, remove that user from the active users list
+    else delete activeUsers[name]
 , 900000
 
 
