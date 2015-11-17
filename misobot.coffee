@@ -30,6 +30,7 @@ startTime     = Date.now()
 queue         = []
 queueOpen     = false
 queueCurrUser = ""
+activeUsers   = {}
 
 
 # Initialize Misobot
@@ -46,9 +47,24 @@ client.speak = (message) ->
   this.say "##{process.env.TWITCH_USER}", "/me #{message}"
 
 # Handle errors to prevent the bot from crashing.
-# @param {message:string}
-# @return {void}
 client.addListener "error", (message) -> console.log "[ERROR] #{message}"
+
+# Initialize 15 minute intervals for updating token counts.
+setInterval () ->
+  timeNow = Date.now()
+
+  # Iterate through every active user
+  for name, time of activeUsers
+    seconds = Math.floor(Math.abs(timeNow - time) / 1000)
+    minutes = Math.floor(seconds / 60)
+
+    # If the user has said something within the past 5 minutes, add tokens
+    if minutes <= 5
+      User.findOrCreate { name: name }, (err, user) ->
+        user.tokens ?= 0
+        user.tokens += 10
+        user.save()
+, 900000
 
 
 # Helper Methods
@@ -98,6 +114,9 @@ timeDiff = (date1, date2) ->
 client.addListener "message", (from, to, message) ->
   from = formatUser from
   to   = formatUser to
+
+  # Update user's timestamp in active users list.
+  activeUsers[from] = Date.now()
 
   # Display an informative message regarding bot commands.
   if /^!commands$/.test message
@@ -178,6 +197,7 @@ client.addListener "message", (from, to, message) ->
     else
       client.speak "#{from}, I don't have you in the list so you're all good"
 
+  # Display user's token balance.
   else if /^!mytohkens$/.test message
     User.findOrCreate { name: from }, (err, user) ->
       client.speak "#{from}, you currently have #{user.tokens}
