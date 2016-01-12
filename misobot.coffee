@@ -183,7 +183,7 @@ client.addListener "message", (from, to, message) ->
   # Add a user to the list, if it's open.
   else if /^!join$/.test message
     if queueOpen
-      if !queue.indexOf(from) > -1
+      if queue.indexOf(from) == -1
         queue.push from
         client.speak "#{from}, you've been added to the list! You are
           ##{queue.length} in the list"
