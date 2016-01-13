@@ -141,10 +141,14 @@ client.addListener "message", (from, to, message) ->
   else if /^!shoutout \S*$/.test message
     if isMod from
       params = getParams message
-      if params.length > 0
+      if params.length == 1
         user = formatUser params[0]
         client.speak "Show #{user} some #{process.env.FOLLOWER_NAME} lovin'
           over at http://twitch.tv/#{user}! <3"
+
+  # Let Misobot hug back users.
+  else if /^!hug$/.test message
+    client.speak "hugs #{from} <4"
 
   # Open the list.
   else if /^!openlist$/.test message
@@ -167,7 +171,8 @@ client.addListener "message", (from, to, message) ->
   # Display the list.
   else if /^!list$/.test message
     if queue.length > 0
-      client.speak "Current list is: #{queue.join ', '}"
+      readableList = queue.map (currentValue, index, array) -> currentValue.name
+      client.speak "Current list is: #{readableList.join ', '}"
     else
       client.speak "List is empty :("
 
@@ -176,19 +181,29 @@ client.addListener "message", (from, to, message) ->
     if isStreamer from
       queueCurrUser = queue.shift()
       if queueCurrUser.length > 0
-        client.speak "#{queueCurrUser}, you're now up! CoolCat"
+        client.speak "#{queueCurrUser.name}, you're now up! Join message:
+          #{queueCurrUser.joinMsg}"
       else
         client.speak "We're at the end of the list ShadyLulu"
 
   # Add a user to the list, if it's open.
-  else if /^!join$/.test message
+  else if /^!join \S*$/.test message
     if queueOpen
-      if queue.indexOf(from) == -1
-        queue.push from
-        client.speak "#{from}, you've been added to the list! You are
-          ##{queue.length} in the list"
-      else
-        client.speak "#{from} I already have you in the list, be patient pls"
+      params = getParams message
+      if params.length == 1
+
+        # Make it a requirement for the parameter to be less than 140 chars.
+        joinMsg = params[0]
+        if joinMsg.length > 140
+          client.speak "#{from}, please make your join message less than 140
+            characters"
+        else
+          if queue.indexOf(from) == -1
+            queue.push { name: from, message: joinMsg }
+            client.speak "#{from}, you've been added to the list! You are
+              ##{queue.length} in the list"
+          else
+            client.speak "#{from} I already have you in the list, be patient pls"
     else
       client.speak "Sorry, the list isn't open right now"
 
@@ -204,5 +219,5 @@ client.addListener "message", (from, to, message) ->
   else if /^!mytohkens$/.test message
     User.findOrCreate { name: from }, (err, user) ->
       client.speak "#{from}, you currently have #{user.tokens}
-        #{process.env.TOKENS_NAME} -- roughly (#{user.tokens/10*15}) minutes
+        #{process.env.TOKENS_NAME} -- roughly #{user.tokens/10*15} minutes
         worth of active chit chat :3"
