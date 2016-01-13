@@ -165,7 +165,8 @@ client.addListener "message", (from, to, message) ->
   else if /^!openlist$/.test message
     if isStreamer from
       queueOpen = true
-      client.speak "List is open, type !join to join"
+      client.speak "List is open, type !join {NNID/level code/custom message}
+        to join"
 
   # Close the list.
   else if /^!closelist$/.test message
