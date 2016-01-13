@@ -193,7 +193,7 @@ client.addListener "message", (from, to, message) ->
       queueCurrUser = queue.shift()
       if queueCurrUser != undefined
         client.speak "#{queueCurrUser.name}, you're now up! Join message:
-          #{queueCurrUser.joinMsg}"
+          #{queueCurrUser.message}"
       else
         client.speak "We're at the end of the list ShadyLulu"
 
@@ -213,9 +213,6 @@ client.addListener "message", (from, to, message) ->
         else
           client.speak "#{from}, please make your join message less than 140
             characters"
-      else
-        client.speak "#{from}, make sure you write something after !join like
-          a NNID, level code, or a short message :)"
     else
       client.speak "Sorry, the list isn't open right now"
 
