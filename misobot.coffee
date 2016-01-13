@@ -99,6 +99,17 @@ formatUser = (user) -> user.toLowerCase().replace /@/g, ""
 # @return {string}
 pad = (num) -> if num < 10 then "0#{num}" else num
 
+# Looks through an array of objects for a particular key value and returns the
+# index of the first instance of a match. Otherwise, return -1.
+# @param {array:array}
+# @param {key:string}
+# @param {value:string}
+# @return {number}
+indexOfKeyValue = (array, key, value) ->
+  array.forEach (obj, index) ->
+    index if obj[key] == value
+  -1
+
 # Gives an hours and minutes difference between two Date objects.
 # @param {date1:date}
 # @param {date2:date}
@@ -193,7 +204,7 @@ client.addListener "message", (from, to, message) ->
       if joinMsg.length > 0
         # Make it a requirement for the parameter to be less than 140 chars.
         if joinMsg.length <= 140
-          if queue.indexOf(from) == -1
+          if indexOfKeyValue(queue, "name", from) == -1
             queue.push { name: from, message: joinMsg }
             client.speak "#{from}, you've been added to the list! You are
               ##{queue.length} in the list"
