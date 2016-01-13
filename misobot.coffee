@@ -204,4 +204,5 @@ client.addListener "message", (from, to, message) ->
   else if /^!mytohkens$/.test message
     User.findOrCreate { name: from }, (err, user) ->
       client.speak "#{from}, you currently have #{user.tokens}
-        #{process.env.TOKENS_NAME}"
+        #{process.env.TOKENS_NAME} -- roughly (#{user.tokens/10*15}) minutes
+        worth of active chit chat :3"
