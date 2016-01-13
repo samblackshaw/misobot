@@ -201,6 +201,7 @@ client.addListener "message", (from, to, message) ->
   else if /^!join \S*$/.test message
     if queueOpen
       joinMsg = getParams(message).join " "
+      console.log joinMsg
       if joinMsg.length > 0
         # Make it a requirement for the parameter to be less than 140 chars.
         if joinMsg.length <= 140
@@ -222,7 +223,7 @@ client.addListener "message", (from, to, message) ->
   # Remove a user from the list.
   else if /^!leave$/.test message
     if queue.indexOf(from) > -1
-      queue.splice queue.indexOf(from), 1
+      queue.splice indexOfKeyValue(queue, "name", from), 1
       client.speak "Okay #{from}, I've removed you from the list"
     else
       client.speak "#{from}, I don't have you in the list so you're all good"
