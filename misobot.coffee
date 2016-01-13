@@ -180,7 +180,7 @@ client.addListener "message", (from, to, message) ->
   else if /^!next$/.test message
     if isStreamer from
       queueCurrUser = queue.shift()
-      if queueCurrUser.length > 0
+      if queueCurrUser != undefined
         client.speak "#{queueCurrUser.name}, you're now up! Join message:
           #{queueCurrUser.joinMsg}"
       else
@@ -189,21 +189,22 @@ client.addListener "message", (from, to, message) ->
   # Add a user to the list, if it's open.
   else if /^!join \S*$/.test message
     if queueOpen
-      params = getParams message
-      if params.length == 1
-
+      joinMsg = getParams(message).join " "
+      if joinMsg.length > 0
         # Make it a requirement for the parameter to be less than 140 chars.
-        joinMsg = params[0]
-        if joinMsg.length > 140
-          client.speak "#{from}, please make your join message less than 140
-            characters"
-        else
+        if joinMsg.length <= 140
           if queue.indexOf(from) == -1
             queue.push { name: from, message: joinMsg }
             client.speak "#{from}, you've been added to the list! You are
               ##{queue.length} in the list"
           else
             client.speak "#{from} I already have you in the list, be patient pls"
+        else
+          client.speak "#{from}, please make your join message less than 140
+            characters"
+      else
+        client.speak "#{from}, make sure you write something after !join like
+          a NNID, level code, or a short message :)"
     else
       client.speak "Sorry, the list isn't open right now"
 
