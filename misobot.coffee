@@ -106,9 +106,9 @@ pad = (num) -> if num < 10 then "0#{num}" else num
 # @param {value:string}
 # @return {number}
 indexOfKeyValue = (array, key, value) ->
-  array.forEach (obj, index) ->
-    index if obj[key] == value
-  -1
+  index = -1
+  array.forEach (obj, _index) -> index = _index if obj[key] == value
+  index
 
 # Gives an hours and minutes difference between two Date objects.
 # @param {date1:date}
