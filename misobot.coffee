@@ -132,15 +132,27 @@ client.addListener "message", (from, to, message) ->
   # Update user's timestamp in active users list.
   activeUsers[from] = Date.now()
 
-  # Display an informative message regarding bot commands.
+  # Display bot commands.
   if /^!commands$/.test message
-    client.speak "To see all my commands, please check the channel bio :)"
+    client.speak "I can tell you my !uptime, #{process.env.TWITCH_USER}'s !nnid,
+      the channel's !discord server link, !social outlets, and !hug you. If a
+      list is open, you can !join with your NNID or a custom message or !leave
+      if you can't play anymore. You can also see how many stream munnies you
+      have with !mytohkens -- those are all my commands for now!"
 
   # Display difference between when this command is executed and the
   # start time in memory.
   else if /^!uptime$/.test message
     client.speak "I've been online for
       #{timeDiff startTime, Date.now()}"
+
+  # Display the streamer's NNID.
+  else if /^!nnid$/.test message
+    client.speak "NNID: #{process.env.NNID}"
+
+  # Display a link to the stream Discord server.
+  else if /^!discord$/.test message
+    client.speak "https://discord.gg/0f495Nv0ETpugs7q"
 
   # Display social media outlets for the stream.
   else if /^!social$/.test message
