@@ -229,6 +229,16 @@ client.addListener "message", (from, to, message) ->
     else
       client.speak "Sorry, the list isn't open right now"
 
+  # Say what place in line someone is.
+  else if /^!spot$/.test message
+    userIndex = indexOfKeyValue(queue, "name", from)
+    if userIndex == 0
+      client.speak "#{from}, you're next in the list! Please be ready"
+    else if userIndex > -1
+      client.speak "#{from}, you're ##{userIndex + 1} in the list"
+    else
+      client.speak "You're not in the list"
+
   # Remove a user from the list.
   else if /^!leave$/.test message
     userIndex = indexOfKeyValue(queue, "name", from)
