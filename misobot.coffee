@@ -241,6 +241,33 @@ client.addListener "message", (from, to, message) ->
     else
       client.speak "Sorry, the list isn't open right now"
 
+  # Move user from list.
+  else if /^!move .*$/.test message
+    if isMod from
+      params = getParams(message)
+      if params.length == 2
+        user = params[0]
+        pos  = params[1]
+
+        if !isNaN(pos)
+          pos       = parseInt pos
+          pos       = Math.max Math.min(pos, queue.length), 1
+          userIndex = indexOfKeyValue(queue, "name", user)
+
+          if userIndex > -1
+            _user = queue.splice userIndex, 1
+            queue.splice pos-1, 0, _user[0]
+            client.speak "#{user} was moved from list position ##{userIndex+1} to
+              ##{pos}"
+          else
+            client.speak "#{user} is not currently in the list"
+
+        else
+          client.speak "#{from}, make sure you provide a whole number"
+
+      else
+        client.speak "#{from}, make sure you provide a user and list position"
+
   # Remove users from the list.
   else if /^!remove .*$/.test message
     if isMod from
