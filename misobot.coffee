@@ -152,7 +152,7 @@ client.addListener "message", (from, to, message) ->
 
   # Display a link to the stream Discord server.
   else if /^!discord$/.test message
-    client.speak "https://discord.gg/0f495Nv0ETpugs7q"
+    client.speak "Discord: #{process.env.DISCORD}"
 
   # Display social media outlets for the stream.
   else if /^!social$/.test message
@@ -208,6 +208,10 @@ client.addListener "message", (from, to, message) ->
           #{queueCurrUser.message}"
       else
         client.speak "We're at the end of the list ShadyLulu"
+
+  # Warning message for join without a message.
+  else if /^!join$/.test message
+    client.speak "Type !join {nnid} to join the list"
 
   # Add a user to the list, if it's open.
   else if /^!join .*$|^!submit .*$/.test message
