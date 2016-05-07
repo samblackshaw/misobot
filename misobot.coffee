@@ -136,9 +136,10 @@ client.addListener "message", (from, to, message) ->
   if /^!commands$/.test message
     client.speak "I can tell you my !uptime, #{process.env.TWITCH_USER}'s !nnid,
       the channel's !discord server link, !social outlets, and !hug you. If a
-      list is open, you can !join with your NNID or a custom message or !leave
-      if you can't play anymore. You can also see how many stream munnies you
-      have with !mytohkens -- those are all my commands for now!"
+      list is open, you can !join with your NNID or a custom message, see your
+      !spot, or !leave if you can't play anymore. You can also see how many
+      stream munnies you have with !mytohkens -- those are all my commands for
+      now!"
 
   # Display difference between when this command is executed and the
   # start time in memory.
@@ -152,7 +153,11 @@ client.addListener "message", (from, to, message) ->
 
   # Display a link to the stream Discord server.
   else if /^!discord$/.test message
-    client.speak "https://discord.gg/0f495Nv0ETpugs7q"
+    client.speak "Discord: #{process.env.DISCORD}"
+
+  # Display a link to the stream playlist.
+  else if /^!playlist$/.test message
+    client.speak "Playlist: #{process.env.PLAYLIST}"
 
   # Display social media outlets for the stream.
   else if /^!social$/.test message
@@ -177,7 +182,7 @@ client.addListener "message", (from, to, message) ->
   else if /^!openlist$/.test message
     if isStreamer from
       queueOpen = true
-      client.speak "List is open, type !join {NNID} or !submit {code} to join"
+      client.speak "List is open, type !join {nnid} or !submit {code} to join"
 
   # Close the list.
   else if /^!closelist$/.test message
@@ -190,6 +195,15 @@ client.addListener "message", (from, to, message) ->
     if isStreamer from
       queue = []
       client.speak "I cleared the list, master <3"
+
+  # Restore a list if Miso dies.
+  else if /^!restorelist .*$/.test message
+    if isStreamer from
+      if queue.length == 0
+        users = getParams(message)
+        users.forEach (user, i) ->
+          queue.push { name: user, message: "r e s t o r e d" }
+        client.speak "The list has been r e s t o r e d"
 
   # Display the list.
   else if /^!list$/.test message
@@ -206,8 +220,17 @@ client.addListener "message", (from, to, message) ->
       if queueCurrUser != undefined
         client.speak "#{queueCurrUser.name}, you're now up! Join message:
           #{queueCurrUser.message}"
+
+        # Tell the next person in line to be ready.
+        if queue.length > 0
+          client.speak "#{queue[0].name}, you will be up next, please be ready"
+
       else
         client.speak "We're at the end of the list ShadyLulu"
+
+  # Warning message for join without a message.
+  else if /^!join$/.test message
+    client.speak "Type !join {nnid} to join the list"
 
   # Add a user to the list, if it's open.
   else if /^!join .*$|^!submit .*$/.test message
@@ -227,6 +250,45 @@ client.addListener "message", (from, to, message) ->
             characters"
     else
       client.speak "Sorry, the list isn't open right now"
+
+  # Move user from list.
+  else if /^!move .*$/.test message
+    if isMod from
+      params = getParams(message)
+      if params.length == 2
+        user = params[0]
+        pos  = params[1]
+
+        if !isNaN(pos)
+          pos       = parseInt pos
+          pos       = Math.max Math.min(pos, queue.length), 1
+          userIndex = indexOfKeyValue(queue, "name", user)
+
+          if userIndex > -1
+            _user = queue.splice userIndex, 1
+            queue.splice pos-1, 0, _user[0]
+            client.speak "#{user} was moved from list position ##{userIndex+1} to
+              ##{pos}"
+          else
+            client.speak "#{user} is not currently in the list"
+
+        else
+          client.speak "#{from}, make sure you provide a whole number"
+
+      else
+        client.speak "#{from}, make sure you provide a user and list position"
+
+  # Remove users from the list.
+  else if /^!remove .*$/.test message
+    if isMod from
+      users = getParams(message)
+      users.forEach (user, i) ->
+        userIndex = indexOfKeyValue(queue, "name", user)
+        if userIndex > -1
+          queue.splice userIndex, 1
+          client.speak "#{user} was removed from the list"
+        else
+          client.speak "#{user} is not in the list"
 
   # Say what place in line someone is.
   else if /^!spot$/.test message
