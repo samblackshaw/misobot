@@ -136,9 +136,10 @@ client.addListener "message", (from, to, message) ->
   if /^!commands$/.test message
     client.speak "I can tell you my !uptime, #{process.env.TWITCH_USER}'s !nnid,
       the channel's !discord server link, !social outlets, and !hug you. If a
-      list is open, you can !join with your NNID or a custom message or !leave
-      if you can't play anymore. You can also see how many stream munnies you
-      have with !mytohkens -- those are all my commands for now!"
+      list is open, you can !join with your NNID or a custom message, see your
+      !spot, or !leave if you can't play anymore. You can also see how many
+      stream munnies you have with !mytohkens -- those are all my commands for
+      now!"
 
   # Display difference between when this command is executed and the
   # start time in memory.
@@ -194,6 +195,15 @@ client.addListener "message", (from, to, message) ->
     if isStreamer from
       queue = []
       client.speak "I cleared the list, master <3"
+
+  # Restore a list if Miso dies.
+  else if /^!restorelist .*$/.test message
+    if isStreamer from
+      if queue.length == 0
+        users = getParams(message)
+        users.forEach (user, i) ->
+          queue.push { name: user, message: "r e s t o r e d" }
+        client.speak "The list has been r e s t o r e d"
 
   # Display the list.
   else if /^!list$/.test message
