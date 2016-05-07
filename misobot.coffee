@@ -135,11 +135,11 @@ client.addListener "message", (from, to, message) ->
   # Display bot commands.
   if /^!commands$/.test message
     client.speak "I can tell you my !uptime, #{process.env.TWITCH_USER}'s !nnid,
-      the channel's !discord server link, !social outlets, and !hug you. If a
-      list is open, you can !join with your NNID or a custom message, see your
-      !spot, or !leave if you can't play anymore. You can also see how many
-      stream munnies you have with !mytohkens -- those are all my commands for
-      now!"
+      the channel's !discord server link, the stream !playlist, !social outlets,
+      and !hug you. If a list is open, you can !join with your NNID or a custom
+      message, see your !spot, or !leave if you can't play anymore. You can also
+      see how many stream munnies you have with !mytohkens -- those are all my
+      commands for now!"
 
   # Display difference between when this command is executed and the
   # start time in memory.
@@ -153,11 +153,11 @@ client.addListener "message", (from, to, message) ->
 
   # Display a link to the stream Discord server.
   else if /^!discord$/.test message
-    client.speak "Discord: #{process.env.DISCORD}"
+    client.speak "Discord: #{process.env.DISCORD_URL}"
 
   # Display a link to the stream playlist.
   else if /^!playlist$/.test message
-    client.speak "Playlist: #{process.env.PLAYLIST}"
+    client.speak "Playlist: #{process.env.PLAYLIST_URL}"
 
   # Display social media outlets for the stream.
   else if /^!social$/.test message
