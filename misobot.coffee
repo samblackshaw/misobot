@@ -181,7 +181,7 @@ client.addListener "message", (from, to, message) ->
   else if /^!openlist$/.test message
     if isStreamer from
       queueOpen = true
-      client.speak "List is open, type !join {NNID} or !submit {code} to join"
+      client.speak "List is open, type !join {nnid} or !submit {code} to join"
 
   # Close the list.
   else if /^!closelist$/.test message
@@ -210,6 +210,11 @@ client.addListener "message", (from, to, message) ->
       if queueCurrUser != undefined
         client.speak "#{queueCurrUser.name}, you're now up! Join message:
           #{queueCurrUser.message}"
+
+        # Tell the next person in line to be ready.
+        if queue.length > 0
+          client.speak "#{queue[0].name}, you will be up next, please be ready"
+
       else
         client.speak "We're at the end of the list ShadyLulu"
 
@@ -235,6 +240,18 @@ client.addListener "message", (from, to, message) ->
             characters"
     else
       client.speak "Sorry, the list isn't open right now"
+
+  # Remove users from the list.
+  else if /^!remove .*$/.test message
+    if isMod from
+      users = getParams(message)
+      users.forEach (user, i) ->
+        userIndex = indexOfKeyValue(queue, "name", user)
+        if userIndex > -1
+          queue.splice userIndex, 1
+          client.speak "#{user} was removed from the list"
+        else
+          client.speak "#{user} is not in the list"
 
   # Say what place in line someone is.
   else if /^!spot$/.test message
