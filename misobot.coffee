@@ -154,6 +154,10 @@ client.addListener "message", (from, to, message) ->
   else if /^!discord$/.test message
     client.speak "Discord: #{process.env.DISCORD}"
 
+  # Display a link to the stream playlist.
+  else if /^!playlist$/.test message
+    client.speak "Playlist: #{process.env.PLAYLIST}"
+
   # Display social media outlets for the stream.
   else if /^!social$/.test message
     client.speak "Keep up with #{process.env.TWITCH_USER} when we're not
