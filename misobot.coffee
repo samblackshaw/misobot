@@ -46,6 +46,12 @@ client = new irc.Client "irc.twitch.tv", process.env.TWITCH_BOT_USER,
 client.speak = (message) ->
   this.say "##{process.env.TWITCH_USER}", "/me #{message}"
 
+# Helper method to send a raw message to the user channel.
+# @param {message:string}
+# @return {void}
+client.speakRaw = (message) ->
+  this.say "##{process.env.TWITCH_USER}", "#{message}"
+
 # Handle errors to prevent the bot from crashing.
 client.addListener "error", (message) -> console.log "[ERROR] #{message}"
 
@@ -177,6 +183,10 @@ client.addListener "message", (from, to, message) ->
   # Let Misobot hug back users.
   else if /^!hug$/.test message
     client.speak "hugs #{from} <4"
+
+  # Let someone purge their own messages.
+  else if /^!seppuku$/.test message
+    client.speakRaw "/timeout #{from} 1"
 
   # Open the list.
   else if /^!openlist$/.test message
