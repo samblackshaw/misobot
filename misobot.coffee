@@ -188,6 +188,13 @@ client.addListener "message", (from, to, message) ->
   else if /^!seppuku$/.test message
     client.speakRaw "/timeout #{from} 1"
 
+  else if /^!pls \S*$/.test message
+    if isMod from
+      params = getParams message
+      if params.length == 1
+        user = formatUser params[0]
+        client.speakRaw "/timeout #{user} 1"
+
   # Open the list.
   else if /^!openlist$/.test message
     if isStreamer from
